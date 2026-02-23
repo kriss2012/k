@@ -1,12 +1,23 @@
-I’ll generate proper Oracle SQL / PL-SQL code for the tasks shown in your image (17–27). Clean, runnable, and exam-ready.
+Here is your complete content converted into a single Markdown (.md) file format, properly structured and ready to submit.
+
+You can copy this directly into a file named:
+
+oracle_practical_17_to_24.md
 
 
 ---
 
-✅ 17 & 18. Create Department Table + Operations
+# Oracle SQL / PL-SQL Practical (17–24)
 
-a) Create Table
+Clean, Runnable, Exam-Ready Code
 
+---
+
+## ✅ 17 & 18. Create Department Table + Operations
+
+### a) Create Table
+
+```sql
 CREATE TABLE department (
     deptno INT PRIMARY KEY,
     deptname VARCHAR2(30),
@@ -35,7 +46,7 @@ COMMIT;
 
 ---
 
-c) List records grouped by deptno
+c) List Records Grouped by deptno
 
 SELECT deptno, COUNT(*) 
 FROM department
@@ -45,7 +56,7 @@ ORDER BY deptno;
 
 ---
 
-d) Update record where deptno = 9
+d) Update Record Where deptno = 9
 
 UPDATE department
 SET location = 'Bangalore'
@@ -56,7 +67,7 @@ COMMIT;
 
 ---
 
-e) Delete any column data (example: delete designation column)
+e) Delete Column (designation)
 
 ALTER TABLE department
 DROP COLUMN designation;
@@ -209,3 +220,21 @@ DECLARE
 BEGIN
     result := add_numbers(10, 20);
     DBMS_OUTPUT.PUT_LINE('Sum = ' || result);
+END;
+/
+
+
+---
+
+✔ End of Practical 17–24
+
+---
+
+If you want, I can now:
+
+- ✅ Format it with a professional college cover page  
+- ✅ Convert it into PDF format  
+- ✅ Add Practical 25–27 also  
+- ✅ Add proper comments for viva explanation  
+
+Tell me what you need 👍
