@@ -1,255 +1,284 @@
-# 📘 DBMS / PL-SQL Practical Programs (12–27)
+# 📘 ASP.NET Web Forms Practical Journal
+Name: ____________________  
+Class: BCA  
+Subject: ASP.NET  
+College: ____________________  
 
 ---
 
-# ✅ Practical 16
-## Demonstrate GROUP BY and ORDER BY
+# ✅ Practical 1: Basic ASP.NET Page
 
-```sql
-CREATE TABLE employee (
-    empno INT PRIMARY KEY,
-    ename VARCHAR(30),
-    deptno INT,
-    salary NUMBER(10)
-);
+## Default.aspx
+```aspx
+<%@ Page Language="C#" AutoEventWireup="true" CodeFile="Default.aspx.cs" Inherits="_Default" %>
 
-INSERT INTO employee VALUES (101,'Rahul',10,25000);
-INSERT INTO employee VALUES (102,'Sneha',20,30000);
-INSERT INTO employee VALUES (103,'Amit',10,28000);
-INSERT INTO employee VALUES (104,'Priya',30,35000);
+<html>
+<body>
+<form runat="server">
+    <asp:Label ID="lblMsg" runat="server"></asp:Label>
+</form>
+</body>
+</html>
+```
 
--- GROUP BY
-SELECT deptno, AVG(salary) AS avg_salary
-FROM employee
-GROUP BY deptno;
+## Default.aspx.cs
+```csharp
+using System;
 
--- ORDER BY
-SELECT * FROM employee
-ORDER BY salary DESC;
+public partial class _Default : System.Web.UI.Page
+{
+    protected void Page_Load(object sender, EventArgs e)
+    {
+        lblMsg.Text = "Welcome to ASP.NET";
+    }
+}
 ```
 
 ---
 
-# ✅ Practical 17 & 18
-## Create Department Table and Perform Operations
+# ✅ Practical 2: ASP.NET Controls
 
-```sql
-CREATE TABLE department (
-    deptno INT PRIMARY KEY,
-    deptname VARCHAR(30),
-    location VARCHAR(30)
-);
+```aspx
+Enter Name:
+<asp:TextBox ID="txtName" runat="server"></asp:TextBox>
+<asp:Button ID="btn" runat="server" Text="Submit" OnClick="btn_Click" />
+<asp:Label ID="lbl" runat="server"></asp:Label>
+```
 
--- Add column designation
-ALTER TABLE department
-ADD designation VARCHAR(30);
-
--- Insert values
-INSERT INTO department VALUES (1,'HR','Pune','Manager');
-INSERT INTO department VALUES (2,'IT','Mumbai','Developer');
-INSERT INTO department VALUES (9,'Sales','Delhi','Executive');
-
--- Group by deptno
-SELECT deptno, COUNT(*) 
-FROM department
-GROUP BY deptno;
-
--- Update record where deptno = 9
-UPDATE department
-SET location = 'Nagpur'
-WHERE deptno = 9;
-
--- Delete column data (example: delete designation column)
-ALTER TABLE department
-DROP COLUMN designation;
+```csharp
+protected void btn_Click(object sender, EventArgs e)
+{
+    lbl.Text = "Hello " + txtName.Text;
+}
 ```
 
 ---
 
-# ✅ Practical 19
-## PL/SQL – Display Employee Details using Explicit Cursor
+# ✅ Practical 3: ViewState, Session, Application
 
-```sql
-DECLARE
-    CURSOR emp_cursor IS SELECT * FROM employee;
-    emp_record employee%ROWTYPE;
-BEGIN
-    OPEN emp_cursor;
-    LOOP
-        FETCH emp_cursor INTO emp_record;
-        EXIT WHEN emp_cursor%NOTFOUND;
-        DBMS_OUTPUT.PUT_LINE(emp_record.empno || ' ' || emp_record.ename);
-    END LOOP;
-    CLOSE emp_cursor;
-END;
-/
+```csharp
+protected void btnView_Click(object sender, EventArgs e)
+{
+    ViewState["msg"] = "ViewState Example";
+    lbl.Text = ViewState["msg"].ToString();
+}
+
+protected void btnSession_Click(object sender, EventArgs e)
+{
+    Session["msg"] = "Session Example";
+    lbl.Text = Session["msg"].ToString();
+}
+
+protected void btnApp_Click(object sender, EventArgs e)
+{
+    Application["msg"] = "Application Example";
+    lbl.Text = Application["msg"].ToString();
+}
 ```
 
 ---
 
-# ✅ Practical 20
-## Retrieve Employee Details by Employee Number
+# ✅ Practical 4: Validation Control
 
-```sql
-DECLARE
-    v_empno employee.empno%TYPE := &Enter_EmpNo;
-    v_name employee.ename%TYPE;
-    v_salary employee.salary%TYPE;
-BEGIN
-    SELECT ename, salary INTO v_name, v_salary
-    FROM employee
-    WHERE empno = v_empno;
+```aspx
+Name:
+<asp:TextBox ID="txtName" runat="server"></asp:TextBox>
 
-    DBMS_OUTPUT.PUT_LINE('Name: ' || v_name);
-    DBMS_OUTPUT.PUT_LINE('Salary: ' || v_salary);
-END;
-/
+<asp:RequiredFieldValidator 
+    ID="rfv" 
+    runat="server"
+    ControlToValidate="txtName"
+    ErrorMessage="Name Required"
+    ForeColor="Red">
+</asp:RequiredFieldValidator>
 ```
 
 ---
 
-# ✅ Practical 21
-## Update Salary of Employees Earning Less than Average
+# ✅ Practical 5: DropDownList
 
-```sql
-DECLARE
-    CURSOR sal_cursor IS 
-        SELECT empno, salary FROM employee
-        WHERE salary < (SELECT AVG(salary) FROM employee);
+```aspx
+<asp:DropDownList ID="ddl" runat="server">
+    <asp:ListItem>Math</asp:ListItem>
+    <asp:ListItem>Science</asp:ListItem>
+</asp:DropDownList>
 
-BEGIN
-    FOR rec IN sal_cursor LOOP
-        UPDATE employee
-        SET salary = salary + 2000
-        WHERE empno = rec.empno;
-    END LOOP;
-END;
-/
+<asp:Button ID="btn" runat="server" Text="Show" OnClick="btn_Click" />
+<asp:Label ID="lbl" runat="server"></asp:Label>
+```
+
+```csharp
+protected void btn_Click(object sender, EventArgs e)
+{
+    lbl.Text = ddl.SelectedItem.Text;
+}
 ```
 
 ---
 
-# ✅ Practical 22
-## Trigger to Backup Salary Before Update
+# ✅ Practical 6: CheckBox & RadioButton
 
-```sql
-CREATE TABLE salary_backup (
-    empno INT,
-    old_salary NUMBER(10),
-    updated_date DATE
-);
+```aspx
+<asp:CheckBox ID="chk" runat="server" Text="Cricket" />
+<br />
 
-CREATE OR REPLACE TRIGGER salary_trigger
-BEFORE UPDATE ON employee
-FOR EACH ROW
-BEGIN
-    INSERT INTO salary_backup
-    VALUES (:OLD.empno, :OLD.salary, SYSDATE);
-END;
-/
+<asp:RadioButton ID="rb1" runat="server" Text="Male" GroupName="g" />
+<asp:RadioButton ID="rb2" runat="server" Text="Female" GroupName="g" />
+
+<br />
+<asp:Button ID="btn" runat="server" Text="Submit" OnClick="btn_Click" />
+<asp:Label ID="lbl" runat="server"></asp:Label>
+```
+
+```csharp
+protected void btn_Click(object sender, EventArgs e)
+{
+    string result = "";
+
+    if (chk.Checked)
+        result += "Cricket ";
+
+    if (rb1.Checked)
+        result += "Male";
+
+    if (rb2.Checked)
+        result += "Female";
+
+    lbl.Text = result;
+}
 ```
 
 ---
 
-# ✅ Practical 23
-## Procedure to Count Students by Percentage Range
+# ✅ Practical 7: Cookies
 
-```sql
-CREATE TABLE student_course (
-    sid INT,
-    course VARCHAR(30),
-    percentage NUMBER(5)
-);
-
-CREATE OR REPLACE PROCEDURE grade_count(p_course VARCHAR)
-IS
-BEGIN
-    SELECT COUNT(*) INTO :high
-    FROM student_course
-    WHERE percentage BETWEEN 70 AND 100
-    AND course = p_course;
-END;
-/
+```csharp
+protected void Page_Load(object sender, EventArgs e)
+{
+    Response.Cookies["User"].Value = "BCA Student";
+    lbl.Text = Request.Cookies["User"].Value;
+}
 ```
 
 ---
 
-# ✅ Practical 24
-## Function to Add Two Numbers
+# ✅ Practical 8: Master Page
 
-```sql
-CREATE OR REPLACE FUNCTION add_numbers(a NUMBER, b NUMBER)
-RETURN NUMBER
-IS
-BEGIN
-    RETURN a + b;
-END;
-/
+## Site.master
+```aspx
+<%@ Master Language="C#" %>
 
--- Call function
-SELECT add_numbers(10,20) FROM dual;
+<html>
+<body>
+<h2>Master Page Header</h2>
+<asp:ContentPlaceHolder ID="ContentPlaceHolder1" runat="server" />
+</body>
+</html>
+```
+
+## Home.aspx
+```aspx
+<%@ Page MasterPageFile="~/Site.master" %>
+
+<asp:Content ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
+    Master Page Working
+</asp:Content>
 ```
 
 ---
 
-# ✅ Practical 25
-## Function to Return Total Salary of Department
+# ✅ Practical 9: Calendar Control
 
-```sql
-CREATE OR REPLACE FUNCTION total_salary(p_deptno NUMBER)
-RETURN NUMBER
-IS
-    total NUMBER;
-BEGIN
-    SELECT SUM(salary) INTO total
-    FROM employee
-    WHERE deptno = p_deptno;
+```aspx
+<asp:Calendar ID="cal" runat="server" OnSelectionChanged="cal_SelectionChanged" />
+<asp:Label ID="lbl" runat="server"></asp:Label>
+```
 
-    RETURN total;
-END;
-/
-
--- Call function
-SELECT total_salary(10) FROM dual;
+```csharp
+protected void cal_SelectionChanged(object sender, EventArgs e)
+{
+    lbl.Text = cal.SelectedDate.ToShortDateString();
+}
 ```
 
 ---
 
-# ✅ Practical 26
-## User Defined and Built-in Exceptions
+# ✅ Practical 10: AdRotator
 
-```sql
-DECLARE
-    v_salary NUMBER := 0;
-    salary_exception EXCEPTION;
-BEGIN
-    IF v_salary <= 0 THEN
-        RAISE salary_exception;
-    END IF;
-EXCEPTION
-    WHEN salary_exception THEN
-        DBMS_OUTPUT.PUT_LINE('Invalid Salary');
-    WHEN ZERO_DIVIDE THEN
-        DBMS_OUTPUT.PUT_LINE('Divide by Zero Error');
-END;
-/
+```aspx
+<asp:AdRotator ID="AdRotator1" runat="server" AdvertisementFile="Ads.xml" />
 ```
 
 ---
 
-# ✅ Practical 27
-## Reverse a String using PL/SQL
+# ✅ Practical 11: Server.Transfer & Response.Redirect
 
-```sql
-DECLARE
-    str VARCHAR2(50) := 'HELLO';
-    rev VARCHAR2(50);
-BEGIN
-    FOR i IN REVERSE 1..LENGTH(str) LOOP
-        rev := rev || SUBSTR(str,i,1);
-    END LOOP;
+```csharp
+protected void btnTransfer_Click(object sender, EventArgs e)
+{
+    Server.Transfer("Page2.aspx");
+}
 
-    DBMS_OUTPUT.PUT_LINE('Reversed String: ' || rev);
-END;
-/
+protected void btnRedirect_Click(object sender, EventArgs e)
+{
+    Response.Redirect("Page2.aspx");
+}
 ```
+
+---
+
+# ✅ Practical 12: Intrinsic Objects
+
+```csharp
+protected void Page_Load(object sender, EventArgs e)
+{
+    Response.Write("Server Name: " + Request.ServerVariables["SERVER_NAME"]);
+    Response.Write("<br/>User IP: " + Request.UserHostAddress);
+}
+```
+
+---
+
+# ✅ Practical 13: Display Computer Name
+
+```csharp
+protected void Page_Load(object sender, EventArgs e)
+{
+    Response.Write("Computer Name: " + Environment.MachineName);
+}
+```
+
+---
+
+# ✅ Practical 14: GridView with ADO.NET
+
+## GridView.aspx
+```aspx
+<asp:GridView ID="GridView1" runat="server"></asp:GridView>
+```
+
+## GridView.aspx.cs
+```csharp
+using System;
+using System.Data;
+using System.Data.SqlClient;
+
+protected void Page_Load(object sender, EventArgs e)
+{
+    SqlConnection con = new SqlConnection(
+        "Data Source=.;Initial Catalog=TestDB;Integrated Security=True");
+
+    SqlDataAdapter da = new SqlDataAdapter(
+        "SELECT * FROM Students", con);
+
+    DataTable dt = new DataTable();
+    da.Fill(dt);
+
+    GridView1.DataSource = dt;
+    GridView1.DataBind();
+}
+```
+
+---
+
+# 🎓 End of Practical Journal
